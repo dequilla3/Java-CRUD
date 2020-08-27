@@ -18,6 +18,7 @@ public class register_stud extends javax.swing.JFrame {
 
     Connection conn;
     PreparedStatement sql;
+    String studid;
 
     public register_stud() {
         initComponents();
@@ -32,6 +33,30 @@ public class register_stud extends javax.swing.JFrame {
         studtable.getTableHeader().setBackground(new Color(32, 136, 203));
         studtable.getTableHeader().setForeground(new Color(255, 255, 255));
         studtable.setRowHeight(25);
+    }
+
+    private void updateDuplicateValidation() {
+        try {
+            System.out.println(this.studnametxt.getText());
+            String studname = studnametxt.getText();
+            dbh();
+            sql = conn.prepareStatement("select * from student");
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                if (rs.getString("stud_name").equals(studname)) {
+                    System.out.println("False");
+                    updatebtn.setEnabled(false);
+                    break;
+                } else {
+                    updatebtn.setEnabled(true);
+                    System.out.println("True");
+
+                }
+            }
+
+        } catch (Exception x) {
+            JOptionPane.showMessageDialog(this, x.getMessage());
+        }
     }
 
     private void table_text_alignment() {
@@ -79,6 +104,11 @@ public class register_stud extends javax.swing.JFrame {
         jLabel4.setText("Course");
 
         studnametxt.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        studnametxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                studnametxtKeyReleased(evt);
+            }
+        });
 
         contacttxt.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
 
@@ -94,6 +124,12 @@ public class register_stud extends javax.swing.JFrame {
 
         updatebtn.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
         updatebtn.setText("Update");
+        updatebtn.setEnabled(false);
+        updatebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updatebtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -267,7 +303,6 @@ public class register_stud extends javax.swing.JFrame {
                 }
             }
             if (status == false) {
-                System.out.println("HI");
                 sql = conn.prepareStatement("insert into student(stud_name,contact,stud_course) values(?,?,?)");
 
                 sql.setString(1, studname);
@@ -294,17 +329,50 @@ public class register_stud extends javax.swing.JFrame {
 
     private void studtableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_studtableMouseClicked
         try {
+
             DefaultTableModel df = (DefaultTableModel) studtable.getModel();
             int selectedIndex = studtable.getSelectedRow();
 
+            studid = df.getValueAt(selectedIndex, 0).toString();
             studnametxt.setText(df.getValueAt(selectedIndex, 1).toString());
             contacttxt.setText(df.getValueAt(selectedIndex, 2).toString());
             coursetxt.setText(df.getValueAt(selectedIndex, 3).toString());
+            
+            updateDuplicateValidation();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
     }//GEN-LAST:event_studtableMouseClicked
+
+    private void updatebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatebtnActionPerformed
+//        try {
+//            String studname = studnametxt.getText();
+//            String contact = contacttxt.getText();
+//            String course = coursetxt.getText();
+//            
+//            boolean status = false;
+//            dbh();
+//            sql = conn.prepareStatement("select * from student");
+//            ResultSet rs = sql.executeQuery();
+//            while (rs.next()) {
+//                if (rs.getString("stud_name").equals(studname)) {
+//                    System.out.println("String " + studname);
+//                    System.out.println("Database data " + rs.getString("stud_name"));
+//                    JOptionPane.showMessageDialog(null, "Registered already", "Transaction Error!", JOptionPane.ERROR_MESSAGE);
+//                    status = true;
+//                    break;
+//                }
+//            }
+//        } catch (Exception e) {
+//
+//        }
+
+    }//GEN-LAST:event_updatebtnActionPerformed
+
+    private void studnametxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_studnametxtKeyReleased
+        updateDuplicateValidation();
+    }//GEN-LAST:event_studnametxtKeyReleased
 
     public static void main(String args[]) {
         try {

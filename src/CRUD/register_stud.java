@@ -165,7 +165,6 @@ public class register_stud extends javax.swing.JFrame {
         studtable.setIntercellSpacing(new java.awt.Dimension(0, 0));
         studtable.setRowHeight(25);
         studtable.setSelectionBackground(new java.awt.Color(204, 0, 102));
-        studtable.setShowVerticalLines(false);
         studtable.getTableHeader().setReorderingAllowed(false);
         studtable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -240,6 +239,7 @@ public class register_stud extends javax.swing.JFrame {
                     v.add(rs.getString("stud_course"));
                 }
                 df.addRow(v);
+
             }
 
         } catch (Exception e) {
@@ -253,23 +253,38 @@ public class register_stud extends javax.swing.JFrame {
         String course = coursetxt.getText();
 
         try {
-
+            boolean status = false;
             dbh();
-            sql = conn.prepareStatement("insert into student(stud_name,contact,stud_course) values(?,?,?)");
+            sql = conn.prepareStatement("select * from student");
+            ResultSet rs = sql.executeQuery();
+            while (rs.next()) {
+                if (rs.getString("stud_name").equals(studname)) {
+                    System.out.println("String " + studname);
+                    System.out.println("Database data " + rs.getString("stud_name"));
+                    JOptionPane.showMessageDialog(null, "Registered already", "Transaction Error!", JOptionPane.ERROR_MESSAGE);
+                    status = true;
+                    break;
+                }
+            }
+            if (status == false) {
+                System.out.println("HI");
+                sql = conn.prepareStatement("insert into student(stud_name,contact,stud_course) values(?,?,?)");
 
-            sql.setString(1, studname);
-            sql.setString(2, contact);
-            sql.setString(3, course);
+                sql.setString(1, studname);
+                sql.setString(2, contact);
+                sql.setString(3, course);
 
-            sql.executeUpdate();
+                sql.executeUpdate();
 
-            JOptionPane.showMessageDialog(this, "Record Added");
-            studnametxt.setText("");
-            contacttxt.setText("");
-            coursetxt.setText("");
+                JOptionPane.showMessageDialog(this, "Record Added");
+                studnametxt.setText("");
+                contacttxt.setText("");
+                coursetxt.setText("");
 
-            studnametxt.requestFocus();
-            table_refresh();
+                studnametxt.requestFocus();
+                table_refresh();
+
+            }
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -281,11 +296,11 @@ public class register_stud extends javax.swing.JFrame {
         try {
             DefaultTableModel df = (DefaultTableModel) studtable.getModel();
             int selectedIndex = studtable.getSelectedRow();
-            
+
             studnametxt.setText(df.getValueAt(selectedIndex, 1).toString());
             contacttxt.setText(df.getValueAt(selectedIndex, 2).toString());
             coursetxt.setText(df.getValueAt(selectedIndex, 3).toString());
-            
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
         }
@@ -294,7 +309,7 @@ public class register_stud extends javax.swing.JFrame {
     public static void main(String args[]) {
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Windows".equals(info.getName())) {
+                if ("Metal".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }

@@ -18,13 +18,22 @@ public class register_stud extends javax.swing.JFrame {
 
     Connection conn;
     PreparedStatement sql;
-    String studid;
+    private String studid;
+    private Boolean updatestatus;
 
     public register_stud() {
         initComponents();
         table_refresh();
         table_style();
         table_text_alignment();
+        RadioButtonGroup();
+        radioaddbtn.doClick();
+    }
+
+    private void RadioButtonGroup() {
+        ButtonGroup bg = new ButtonGroup();
+        bg.add(radioaddbtn);
+        bg.add(radioupdatebtn);
     }
 
     private void table_style() {
@@ -39,11 +48,15 @@ public class register_stud extends javax.swing.JFrame {
         try {
             System.out.println(this.studnametxt.getText());
             String studname = studnametxt.getText();
+            String contact = contacttxt.getText();
+            String course = coursetxt.getText();
             dbh();
             sql = conn.prepareStatement("select * from student");
             ResultSet rs = sql.executeQuery();
             while (rs.next()) {
-                if (rs.getString("stud_name").equals(studname)) {
+                if (rs.getString("stud_name").equals(studname)
+                        && rs.getString("contact").equals(contact)
+                        && rs.getString("stud_course").equals(course)) {
                     System.out.println("False");
                     updatebtn.setEnabled(false);
                     break;
@@ -83,6 +96,8 @@ public class register_stud extends javax.swing.JFrame {
         coursetxt = new javax.swing.JTextField();
         addbtn = new javax.swing.JButton();
         updatebtn = new javax.swing.JButton();
+        radioupdatebtn = new javax.swing.JRadioButton();
+        radioaddbtn = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         studtable = new javax.swing.JTable();
 
@@ -111,8 +126,18 @@ public class register_stud extends javax.swing.JFrame {
         });
 
         contacttxt.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        contacttxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                contacttxtKeyReleased(evt);
+            }
+        });
 
         coursetxt.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
+        coursetxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                coursetxtKeyReleased(evt);
+            }
+        });
 
         addbtn.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
         addbtn.setText("ADD");
@@ -131,12 +156,25 @@ public class register_stud extends javax.swing.JFrame {
             }
         });
 
+        radioupdatebtn.setText("Update");
+        radioupdatebtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioupdatebtnActionPerformed(evt);
+            }
+        });
+
+        radioaddbtn.setText("Add");
+        radioaddbtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioaddbtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel4)
@@ -149,17 +187,25 @@ public class register_stud extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(radioupdatebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(radioaddbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(addbtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(updatebtn))
                             .addComponent(studnametxt, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(contacttxt, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGap(0, 92, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(19, 19, 19)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioupdatebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(radioaddbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -221,7 +267,7 @@ public class register_stud extends javax.swing.JFrame {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(44, 44, 44)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(44, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -333,12 +379,14 @@ public class register_stud extends javax.swing.JFrame {
             DefaultTableModel df = (DefaultTableModel) studtable.getModel();
             int selectedIndex = studtable.getSelectedRow();
 
+            updatestatus = true;
             studid = df.getValueAt(selectedIndex, 0).toString();
             studnametxt.setText(df.getValueAt(selectedIndex, 1).toString());
             contacttxt.setText(df.getValueAt(selectedIndex, 2).toString());
             coursetxt.setText(df.getValueAt(selectedIndex, 3).toString());
-            
             updateDuplicateValidation();
+            System.out.println("Student ID " + studid);
+            System.out.println("Upate Status: " + updatestatus);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -346,33 +394,55 @@ public class register_stud extends javax.swing.JFrame {
     }//GEN-LAST:event_studtableMouseClicked
 
     private void updatebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updatebtnActionPerformed
-//        try {
-//            String studname = studnametxt.getText();
-//            String contact = contacttxt.getText();
-//            String course = coursetxt.getText();
-//            
-//            boolean status = false;
-//            dbh();
-//            sql = conn.prepareStatement("select * from student");
-//            ResultSet rs = sql.executeQuery();
-//            while (rs.next()) {
-//                if (rs.getString("stud_name").equals(studname)) {
-//                    System.out.println("String " + studname);
-//                    System.out.println("Database data " + rs.getString("stud_name"));
-//                    JOptionPane.showMessageDialog(null, "Registered already", "Transaction Error!", JOptionPane.ERROR_MESSAGE);
-//                    status = true;
-//                    break;
-//                }
-//            }
-//        } catch (Exception e) {
-//
-//        }
+        try {
+            String studname = studnametxt.getText();
+            String contact = contacttxt.getText();
+            String course = coursetxt.getText();
+            dbh();
+            sql = conn.prepareStatement("update student set stud_name = ?, contact = ?, stud_course = ? where stud_id =" + studid);
+            sql.setString(1, studname);
+            sql.setString(2, contact);
+            sql.setString(3, course);
+            sql.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Updated!", "Transaction!", JOptionPane.INFORMATION_MESSAGE);
+            table_refresh();
+            studnametxt.setText("");
+            contacttxt.setText("");
+            coursetxt.setText("");
+
+            studnametxt.requestFocus();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e.getMessage());
+        }
 
     }//GEN-LAST:event_updatebtnActionPerformed
 
+    private void radioupdatebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioupdatebtnActionPerformed
+        updatestatus = true;
+        addbtn.setEnabled(false);
+        System.out.println("Update status " + updatestatus);
+    }//GEN-LAST:event_radioupdatebtnActionPerformed
+
+    private void radioaddbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioaddbtnActionPerformed
+        updatestatus = false;
+        updatebtn.setEnabled(false);
+        addbtn.setEnabled(true);
+        System.out.println("Update status " + updatestatus);
+    }//GEN-LAST:event_radioaddbtnActionPerformed
+
     private void studnametxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_studnametxtKeyReleased
-        updateDuplicateValidation();
+        if (updatestatus == true) {
+            updateDuplicateValidation();
+        }
     }//GEN-LAST:event_studnametxtKeyReleased
+
+    private void contacttxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_contacttxtKeyReleased
+        updateDuplicateValidation();
+    }//GEN-LAST:event_contacttxtKeyReleased
+
+    private void coursetxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_coursetxtKeyReleased
+        updateDuplicateValidation();
+    }//GEN-LAST:event_coursetxtKeyReleased
 
     public static void main(String args[]) {
         try {
@@ -412,6 +482,8 @@ public class register_stud extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton radioaddbtn;
+    private javax.swing.JRadioButton radioupdatebtn;
     private javax.swing.JTextField studnametxt;
     private javax.swing.JTable studtable;
     private javax.swing.JButton updatebtn;
